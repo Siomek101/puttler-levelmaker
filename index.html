@@ -28,7 +28,8 @@
         <label>Ball Position: x - <input type="number" id="mapBallX" value="0" step="0.1">, y - <input type="number" id="mapBallY" value="2" step="0.1"></label>
         <br>
         <label>Flag Position: x - <input type="number" id="mapFlagX" value="0" step="0.1">, y - <input type="number" id="mapFlagY" value="-2.1" step="0.1"></label>
-        
+        <br>
+        <button onclick="updCanvas()">Refresh</button>
         <hr>
         <b>Blocks</b>
         <button onclick="addBlock()">Add</button>
@@ -109,6 +110,9 @@
                 ctx.fillStyle = "#fff";
                 ballS = 0.07;
                 ctx.fillRect(center.x+(map.ballPos.x+0.04)*posScale,center.y-(map.ballPos.y-0.04)*posScale,ballS*scale,ballS*scale);
+                
+                ctx.fillStyle = "#f00";
+                ctx.fillRect(center.x+(map.flagPos.x-1)*posScale,center.y-(map.flagPos.y)*posScale,scale,scale);
                 
             }
 
