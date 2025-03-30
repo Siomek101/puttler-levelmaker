@@ -4,8 +4,147 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Level maker for puttler</title>
+        <style>
+            :root {
+                font-family: 'Courier New', Courier, monospace;
+                background: #557;
+                color: white;
+            }
+            input, button {
+                padding: 5px;
+                padding-inline: 10px;
+            }
+            #mapOutput {
+                width: 500px;
+            }
+        </style>
+
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     </head>
     <body>
+        <label>Name: <input type="text" id="mapName" value="Test"></label>
+        <label>Par: <input type="number" id="mapPar" value="2"></label>
+        <br>
+        <label>Ball Position: x - <input type="number" id="mapBallX" value="0" step="0.1">, y - <input type="number" id="mapBallY" value="2" step="0.1"></label>
+        <br>
+        <label>Flag Position: x - <input type="number" id="mapFlagX" value="0" step="0.1">, y - <input type="number" id="mapFlagY" value="-2.1" step="0.1"></label>
         
+        <hr>
+        <b>Blocks</b>
+        <button onclick="addBlock()">Add</button>
+        <div id="blocks"></div>
+
+        <hr>
+        <label>Output: <textarea type="text" id="mapOutput" readonly></textarea></label>
+        <button onclick="save()">Save</button>
+        
+
+
+        <canvas width="1280" height="800" id="canvas"></canvas>
+
+        <script>
+            function vec(x,y,z) {
+                return {
+                    x: parseFloat(x),
+                    y: parseFloat(y),
+                    z: parseFloat(z),
+                }
+            }
+            var map = {
+                    name: $("#mapName").val(),
+                    par: parseInt($("#mapPar").val()),
+                    ballPos: vec($("#mapBallX").val(),$("#mapBallY").val(),0),
+                    flagPos: vec($("#mapFlagX").val(),$("#mapFlagY").val(),0),
+                    blocks: []
+                };
+            function save() {
+                map = {
+                    name: $("#mapName").val(),
+                    par: parseInt($("#mapPar").val()),
+                    ballPos: vec($("#mapBallX").val(),$("#mapBallY").val(),0),
+                    flagPos: vec($("#mapFlagX").val(),$("#mapFlagY").val(),0),
+                    blocks: []
+                }
+
+                for (const [key, value] of Object.entries(blocks)) {
+                    map.blocks.push(value);
+                }
+
+                $("#mapOutput").val(JSON.stringify(map));
+            }
+
+            var canvas = document.getElementById("canvas")
+            var ctx = canvas.getContext("2d");
+            var width = 1280;
+            var height = 800;
+
+            var center = {
+                x: width/2,
+                y: height/2 + 100
+            }
+
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(0,0,width,height)
+            
+
+            var blocks = {};
+            var blocksId = 0;
+
+            var scale = 200;
+            var posScale = 80;
+
+            function updCanvas() {
+                save();
+                ctx.fillStyle = "#fff";
+                ctx.fillRect(0,0,width,height)
+                
+                ctx.fillStyle = "#112";
+                for (const [key, value] of Object.entries(blocks)) {
+                    ctx.fillRect(center.x+(value.pos.x)*posScale-value.size.x*scale/2,center.y-value.pos.y*posScale-value.size.y*scale/2,value.size.x*scale,value.size.y*scale);
+                }
+                ctx.fillStyle = "#000";
+                var ballS = 0.1;
+                ctx.fillRect(center.x+(map.ballPos.x)*posScale,center.y-map.ballPos.y*posScale,ballS*scale,ballS*scale);
+                
+                ctx.fillStyle = "#fff";
+                ballS = 0.07;
+                ctx.fillRect(center.x+(map.ballPos.x+0.04)*posScale,center.y-(map.ballPos.y-0.04)*posScale,ballS*scale,ballS*scale);
+                
+            }
+
+            function addBlock() {
+                var id = blocksId.toString();
+                blocks[id] = {
+                    pos:vec(0,0,0),
+                    size:vec(1,1,1)
+                }
+
+                $("#blocks").append(`
+                    <div id="blocksI${id}">
+                        <label>Position: x - <input type="number" id="blocksI${id}X" value="0" step="0.1">, y - <input type="number" id="blocksI${id}Y" value="0" step="0.1"></label>
+                        <label>Size: x - <input type="number" id="blocksI${id}XS" value="1" step="0.1">, y - <input type="number" id="blocksI${id}YS" value="1" step="0.1"></label>
+                        <button onclick="saveBlock('${id}')">Save Block</button>
+                        <button onclick="removeBlock('${id}')">Remove Block</button>
+                    </div>
+                `);
+
+                blocksId++;
+                updCanvas();
+            }
+            function saveBlock(id) {
+                blocks[id] = {
+                    pos:vec($(`#blocksI${id}X`).val(),$(`#blocksI${id}Y`).val(),0),
+                    size:vec($(`#blocksI${id}XS`).val(),$(`#blocksI${id}YS`).val(),1)
+                }
+                updCanvas();
+            }
+            function removeBlock(id) {
+                delete blocks[id];
+                $(`#blocksI${id}`).remove()
+                updCanvas();
+            }
+
+
+        </script>
     </body>
 </html>
