@@ -105,11 +105,11 @@
                 }
                 ctx.fillStyle = "#000";
                 var ballS = 0.1;
-                ctx.fillRect(center.x+(map.ballPos.x)*posScale,center.y-map.ballPos.y*posScale,ballS*scale,ballS*scale);
+                ctx.fillRect(center.x+(map.ballPos.x-0.1)*posScale,center.y-map.ballPos.y*posScale,ballS*scale,ballS*scale);
                 
                 ctx.fillStyle = "#fff";
                 ballS = 0.07;
-                ctx.fillRect(center.x+(map.ballPos.x+0.04)*posScale,center.y-(map.ballPos.y-0.04)*posScale,ballS*scale,ballS*scale);
+                ctx.fillRect(center.x+(map.ballPos.x-0.1+0.04)*posScale,center.y-(map.ballPos.y-0.04)*posScale,ballS*scale,ballS*scale);
                 
                 ctx.fillStyle = "#f00";
                 ctx.fillRect(center.x+(map.flagPos.x-1)*posScale,center.y-(map.flagPos.y)*posScale,scale,scale);
@@ -120,7 +120,7 @@
                 var id = blocksId.toString();
                 blocks[id] = {
                     pos:vec(0,0,0),
-                    size:vec(1,1,1)
+                    size:vec(0.39,0.39,1)
                 }
 
                 $("#blocks").append(`
@@ -138,7 +138,7 @@
             function saveBlock(id) {
                 blocks[id] = {
                     pos:vec($(`#blocksI${id}X`).val(),$(`#blocksI${id}Y`).val(),0),
-                    size:vec($(`#blocksI${id}XS`).val(),$(`#blocksI${id}YS`).val(),1)
+                    size:vec($(`#blocksI${id}XS`).val()*0.39,$(`#blocksI${id}YS`).val()*0.39,1)
                 }
                 updCanvas();
             }
